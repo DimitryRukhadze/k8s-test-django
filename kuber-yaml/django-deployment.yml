@@ -20,6 +20,8 @@ spec:
           envFrom:
             - secretRef:
                 name: django-secrets
+            - configMapRef:
+                name: django-config-v3
 
 ---
 apiVersion: v1
@@ -36,3 +38,14 @@ spec:
     targetPort: 80
     nodePort:
     protocol: TCP
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: django-config-v3
+  labels:
+    app: django
+
+data:
+  DEBUG: "True"
