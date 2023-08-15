@@ -32,3 +32,24 @@ $ docker-compose run web ./manage.py createsuperuser
 `ALLOWED_HOSTS` -- настройка Django со списком разрешённых адресов. Если запрос прилетит на другой адрес, то сайт ответит ошибкой 400. Можно перечислить несколько адресов через запятую, например `127.0.0.1,192.168.0.1,site.test`. [Документация Django](https://docs.djangoproject.com/en/3.2/ref/settings/#allowed-hosts).
 
 `DATABASE_URL` -- адрес для подключения к базе данных PostgreSQL. Другие СУБД сайт не поддерживает. [Формат записи](https://github.com/jacobian/dj-database-url#url-schema).
+
+
+## Deploy через Kubernetes
+
+Для запуска сайта c помощью kubernetes сначала запустите кластер kubernetes, затем перейдите в папку `kuber-yaml`
+Создайте в ней файл `secrets.yml` со следующим содержанием:
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: django-secrets
+data:
+  SECRET_KEY: ваш секретный ключ для django
+  DATABASE_URL: dj-database-url для вашей БД
+```
+
+***Важно!***
+Обе переменные должны быть закодированы в base64.
+
+После того, как файл создан, запустите в терминале комманду `kubectl apply -f secrets.yml`. Она создаст секрет в кластере.
+После этого запустите в терминале комманду `kubectl apply -f django-deployment.yml`.
